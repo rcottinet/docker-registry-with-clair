@@ -1,15 +1,4 @@
-# Portus on Docker compose
-
-This example is two-folded, as it contains the same example deployed in two
-ways:
-
-- A production-ready setup where all communication is encrypted.
-- A version which doesn't use encryption for simplicity.
-
-As explained in the [README file](../README.md) above, this example uses the
-[official Portus image](https://hub.docker.com/r/opensuse/portus/), so it has
-nothing to do with the docker-compose setup used for development in the root
-directory.
+# Portus Clair Registry on Docker compose
 
 ## The hostname
 
@@ -26,6 +15,20 @@ In order to create self-signed certificates, you could use the following command
 
 ```bash
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout portus.key -out portus.crt
+```
+
+```bash
+$ echo "subjectAltName = IP:123.123.123.123" > extfile.cnf #You can use DNS:domain.tld too
+$ openssl genrsa -out secrets/rootca.key 2048 -nodes
+$openssl req -x509 -new -nodes -key secrets/rootca.key \
+ -subj "/C=US/ST=CA/O=Acme, Inc." \
+ -sha256 -days 1024 -out secrets/rootca.crt
+$ openssl genrsa -out secrets/portus.key 2048
+$ openssl req -new -key secrets/portus.key -out secrets/portus.csr \
+ -subj "/C=US/ST=CA/O=Acme, Inc./CN=123.123.123.123"
+$ openssl x509 -req -in secrets/portus.csr -CA secrets/rootca.crt -extfile \
+ extfile.cnf -CAkey secrets/rootca.key -CAcreateserial \
+ -out secrets/portus.crt -days 500 -sha256
 ```
 
 After that, you can simply move the ``portus.key`` and the ``portus.crt`` files
@@ -48,36 +51,3 @@ registry end up using the same hostname. Practically speaking:
 Again, as advertised [here](../README.md), take the word "secure" with a grain
 of salt. Do *not* deploy these files blindly into your cluster: review them
 first, and make all the changes you need to fit your purpose.
-
-### Insecure example
-
-The other example is as minimal as possible. Because of this, there's no NGinx
-proxy and the Portus and the Registry containers are bound to their respective
-ports. Moreover, SSL has not been configured on this setup. Because of this:
-
-- When setting up the registry for the first time in Portus, you do **not** have
-  to check the "Use SSL" box. Moreover, the hostname has to end with the 5000 port
-  (e.g. "my.hostname.com:5000").
-- From the CLI, docker images should be prefixed with the hostname and the 5000
-  port (e.g. "my.hostname.com:5000/opensuse/amd64:latest")
-
-### Serving static assets
-
-The static assets can be served in two ways:
-
-- With NGinx: this is the case of the *secure* example, in which we share the
-  `public` directory between the NGinx and the Portus containers. This way, all
-  assets are served directly and faster from the NGinx container. That being
-  said, make sure to read
-  [this note](http://port.us.org/docs/upgrading-portus.html#upgrading-with-docker-compose)
-  from the documentation first if you are planning to deploy it this way, since
-  it clarifies a common pitfall when upgrading Portus.
-- With Rails by setting the `RAILS_SERVE_STATIC_FILES` environment variable to
-  true. This is done in the *insecure* example, and it's recommended in
-  scenarios where you don't want an extra container for managing your static assets.
-
-## Acknowledgements
-
-Many thanks to [@Djelibeybi](https://github.com/Djelibeybi), since we
-borrowed a lot of the NGinx configuration from
-[his repository](https://github.com/Djelibeybi/Portus-On-OracleLinux7).
