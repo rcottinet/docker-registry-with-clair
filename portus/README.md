@@ -51,3 +51,7 @@ registry end up using the same hostname. Practically speaking:
 Again, as advertised [here](../README.md), take the word "secure" with a grain
 of salt. Do *not* deploy these files blindly into your cluster: review them
 first, and make all the changes you need to fit your purpose.
+
+
+
+## Difficultés rencontrés
