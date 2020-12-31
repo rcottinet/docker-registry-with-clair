@@ -1,10 +1,9 @@
-# Portus Clair Registry on Docker compose
 
 ## The ip address
 
 Pour cet exemple vous aurez besoins de votre ip à de multiple endroits. 
 En effet, vous devrez changer l'ip mise dans le fichier `.env` du docker-compose, 
-ainsi que dans le fichier `nginx/nginx.conf'.
+ainsi que dans le fichier `nginx/nginx.conf`.
 
 ## Certificates
 
