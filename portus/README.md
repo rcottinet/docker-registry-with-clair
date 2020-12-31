@@ -33,7 +33,7 @@ $ openssl x509 -req -in secrets/portus.csr -CA secrets/rootca.crt -extfile \
 ```
 
 Après ça, vous pouvez simplement déplacer les fichiers ``portus.key`` et ``portus.crt``
-dans le repertoire /secrets.
+dans le repertoire /secrets (si le certificat n'est pas pris en compte relancez les containers).
 
 
 ## The setup
@@ -49,16 +49,46 @@ coher la boite "Use SSL" après avoir rentré votre ip.
 - depuis le CLI, les images docker devront être prefixé avec l'ip, mais sans spécifier le port
 (e.g. "255.255.255.255/opensuse/amd64:latest")
 
+Une fois votre Registry ajouté vous devriez pouvoir le tel que l'image suivante dans Portus:
 https://media.discordapp.net/attachments/786291827463553024/793981308145500170/Capture_decran_2020-12-31_a_00.18.09.png?width=1616&height=910
 
-Après une attention particulière vous est demandée, en effet il ne faudra pas
+Puis vous pourrez vous authentifier avec l'utilisateur Portus (ou LDAP si intégré avec le Portus), 
+comme ceci:
+https://media.discordapp.net/attachments/786291827463553024/793976388683169832/Capture_decran_2020-12-30_a_23.58.33.png
+
+Pour ensuite, que vous puissiez push une image dans votre Registry afin qu'elle soit scanné par Clair:
+https://media.discordapp.net/attachments/786291827463553024/793981546524704788/Capture_decran_2020-12-31_a_00.19.07.png
+
+Néanmoins une attention particulière vous est demandée, en effet il ne faudra pas
 déployer ces fichiers à l'aveugle dans votre cluster: Vous devrez d'abord les revoirs
 afin d'appliquer les correctifs correspondant à vos besoins. Par exemple, 
-si vous avez déjà un LDAP vous pouvez l'intégrer à cette infrastructurePortus 
-Again, as advertised [here](../README.md), take the word "secure" with a grain
-of salt. Do *not* deploy these files blindly into your cluster: review them
-first, and make all the changes you need to fit your purpose.
+si vous avez déjà un LDAP vous pouvez l'intégrer à cette infrastructure en suivant cette doc 
+(optionnel une authentification étant déjà permise dans Portus):
+http://port.us.org/features/2_LDAP-support.html
 
+Nous n'avons malheureusement pas pu finaliser le test pour analyser une image avec Clair. 
+Suite à un problème avec le certificat auto-signé qui ne permettaient pas au Registry de notifier 
+à Portus et Clair le push d'une nouvelle image:
 
+```bash
+time="2020-12-30T23:32:48Z" level=warning msg="httpSink{https://192.168.1.25/v2/webhooks/events%7D encountered too many errors, backing off"
+
+time="2020-12-30T23:32:49Z" level=error msg="retryingsink: error writing events: httpSink{https://192.168.1.25/v2/webhooks/events%7D: error posting: Post https://192.168.1.25/v2/webhooks/events: x509: certificate signed by unknown authority, retrying"
+
+time="2020-12-30T23:32:49Z" level=warning msg="httpSink{https://192.168.1.25/v2/webhooks/events%7D encountered too many errors, backing off"
+
+time="2020-12-30T23:32:50Z" level=error msg="retryingsink: error writing events: httpSink{https://192.168.1.25/v2/webhooks/events%7D: error posting: Post https://192.168.1.25/v2/webhooks/events: x509: certificate signed by unknown authority, retrying"
+
+time="2020-12-30T23:32:50Z" level=warning msg="httpSink{https://192.168.1.25/v2/webhooks/events%7D encountered too many errors, backing off"
+```
 
 ## Difficultés rencontrés
+
+La première a été le manque de temps pouvant être consacré au projet, ensuite la génération des 
+certificats avec la bonne configuration afin de permettre la connexion en HTTPS vers Portus, 
+avec bien sur l'analyse clair qui, comme dis précédemment, n'a pas pu aboutir suite au soucis de 
+communication avec le certificat auto-signé. Avec plus de temps nous aurions pu finaliser ce test
+et automatiser cette analyse en passant de docker-compose à Kubernetes et en utilisant un job qui 
+aurait automatisé l'analyse à la suite de chaque livraison sur le registry. Enfin un Web Service 
+aurait aussi pu être intégré afin d'avoir une GUI permettant de visualiser les résultats des analyses
+Tout en donnant des recommandations permettant de réaliser les fixs.
