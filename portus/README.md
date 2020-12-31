@@ -1,24 +1,25 @@
 # Portus Clair Registry on Docker compose
 
-## The hostname
+## The ip address
 
-This example needs the hostname in multiple places. All this has been delegated
-into Compose's support of the `.env` file. For this reason, you will need to
-change hostname set in this file, and also in the `nginx/nginx.conf` file.
+Pour cet exemple vous aurez besoins de votre ip à de multiple endroit. 
+En effet, vous devrez changer l'ip mise dans le fichier .env du docker-compose, 
+ainsi que dans le fichier `nginx/nginx.conf'.
 
 ## Certificates
 
-This example is set up in a way so you can use self-signed certificates. Of
-course this is not something you would want to do in production, but this way we
-ease up the task for those who are curious to try it out.
-In order to create self-signed certificates, you could use the following command:
+Dans cet exemple l'objectif est d'utiliser des certificats auto-signé. 
+Bien sur cela ne doit pas être intégré à la production mais cela était le plus simple 
+pour un exemple sur une machine locale et surtout par rapport au la limite de temps
+à dispositionpour réaliser le projet. Pour créer votre certificat auto-signé, 
+vous pouvez utiliser la commande suivante:
 
 ```bash
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout portus.key -out portus.crt
 ```
 
 ```bash
-$ echo "subjectAltName = IP:123.123.123.123" > extfile.cnf #You can use DNS:domain.tld too
+$ echo "subjectAltName = IP:123.123.123.123" > extfile.cnf #You can use your own ip here too
 $ openssl genrsa -out secrets/rootca.key 2048 -nodes
 $openssl req -x509 -new -nodes -key secrets/rootca.key \
  -subj "/C=US/ST=CA/O=Acme, Inc." \
@@ -31,23 +32,29 @@ $ openssl x509 -req -in secrets/portus.csr -CA secrets/rootca.crt -extfile \
  -out secrets/portus.crt -days 500 -sha256
 ```
 
-After that, you can simply move the ``portus.key`` and the ``portus.crt`` files
-into the secrets directory.
+Après ça, vous pouvez simplement déplacer les fichiers ``portus.key`` et ``portus.crt``
+dans le repertoire /secrets.
+
 
 ## The setup
 
 ### Secure example
 
-The secure example uses an NGinx container that proxies between the Portus and
-the Registry containers. Communication is always encrypted, but note that this
-is not strictly necessary. Because of this proxy setup, both Portus and the
-registry end up using the same hostname. Practically speaking:
+Dans cet exemple on utilise un container NGinx comme proxy entre les containers Portus
+et le Registry. La communication est toujours chiffré cia ssl, bien que non nécessaire
+mais plus sécurisé. Cette infrastructure a pour conséquence que le Registry et le Portus 
+utiliserons la même ip de la machine. de manière plus technique:
+- Lors de la première mise en marche du Registry dans Portus, vous devrez spécifier que vous aurez 
+coher la boite "Use SSL" après avoir rentré votre ip.
+- depuis le CLI, les images docker devront être prefixé avec l'ip, mais sans spécifier le port
+(e.g. "255.255.255.255/opensuse/amd64:latest")
 
-- When setting up the registry for the first time in Portus, you have to check
-  the "Use SSL" box and enter the hostname without specifying any ports.
-- From the CLI, docker images should be prefixed with the hostname, but without
-  specifying any ports (e.g. "my.hostname.com/opensuse/amd64:latest")
+https://media.discordapp.net/attachments/786291827463553024/793981308145500170/Capture_decran_2020-12-31_a_00.18.09.png?width=1616&height=910
 
+Après une attention particulière vous est demandée, en effet il ne faudra pas
+déployer ces fichiers à l'aveugle dans votre cluster: Vous devrez d'abord les revoirs
+afin d'appliquer les correctifs correspondant à vos besoins. Par exemple, 
+si vous avez déjà un LDAP vous pouvez l'intégrer à cette infrastructurePortus 
 Again, as advertised [here](../README.md), take the word "secure" with a grain
 of salt. Do *not* deploy these files blindly into your cluster: review them
 first, and make all the changes you need to fit your purpose.
