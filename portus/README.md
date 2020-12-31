@@ -2,16 +2,16 @@
 
 ## The ip address
 
-Pour cet exemple vous aurez besoins de votre ip à de multiple endroit. 
-En effet, vous devrez changer l'ip mise dans le fichier .env du docker-compose, 
+Pour cet exemple vous aurez besoins de votre ip à de multiple endroits. 
+En effet, vous devrez changer l'ip mise dans le fichier `.env` du docker-compose, 
 ainsi que dans le fichier `nginx/nginx.conf'.
 
 ## Certificates
 
-Dans cet exemple l'objectif est d'utiliser des certificats auto-signé. 
-Bien sur cela ne doit pas être intégré à la production mais cela était le plus simple 
-pour un exemple sur une machine locale et surtout par rapport au la limite de temps
-à dispositionpour réaliser le projet. Pour créer votre certificat auto-signé, 
+Dans cet exemple l'objectif est d'utiliser un certificat auto-signé. 
+Bien sûr, cela ne doit pas être intégré à la production mais c'était plus simple 
+pour un exemple sur une machine locale et surtout par rapport à la limite de temps
+à disposition pour réaliser le projet. Pour créer votre certificat auto-signé, 
 vous pouvez utiliser la commande suivante:
 
 ```bash
@@ -41,15 +41,15 @@ dans le repertoire /secrets (si le certificat n'est pas pris en compte relancez 
 ### Secure example
 
 Dans cet exemple on utilise un container NGinx comme proxy entre les containers Portus
-et le Registry. La communication est toujours chiffré cia ssl, bien que non nécessaire
+et le Registry. La communication est toujours chiffrée via ssl, bien que non nécessaire
 mais plus sécurisé. Cette infrastructure a pour conséquence que le Registry et le Portus 
 utiliserons la même ip de la machine. de manière plus technique:
 - Lors de la première mise en marche du Registry dans Portus, vous devrez spécifier que vous aurez 
-coher la boite "Use SSL" après avoir rentré votre ip.
+coché la boite "Use SSL" après avoir rentré votre ip, sans spécifier le port.
 - depuis le CLI, les images docker devront être prefixé avec l'ip, mais sans spécifier le port
 (e.g. "255.255.255.255/opensuse/amd64:latest")
 
-Une fois votre Registry ajouté vous devriez pouvoir le tel que l'image suivante dans Portus:
+Une fois votre Registry ajouté vous devriez pouvoir le voir tel que l'image suivante dans Portus:
 https://media.discordapp.net/attachments/786291827463553024/793981308145500170/Capture_decran_2020-12-31_a_00.18.09.png?width=1616&height=910
 
 Puis vous pourrez vous authentifier avec l'utilisateur Portus (ou LDAP si intégré avec le Portus), 
