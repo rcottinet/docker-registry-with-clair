@@ -1,7 +1,7 @@
 
 ## The ip address
 
-Pour cet exemple vous aurez besoins de votre ip à de multiple endroits. 
+Pour cet exemple vous aurez besoin de votre ip à de multiples endroits. 
 En effet, vous devrez changer l'ip mise dans le fichier `.env` du docker-compose, pour la creation du certificat,
 ainsi que dans le fichier `nginx/nginx.conf`.
 
@@ -37,7 +37,7 @@ A partir de maintenant, vous devez pouvoir lancer les containers par la commande
 ```bash
 docker-compose up -d
 ```
-Normalement les applications doivent demarrer sans erreurs comme ceci :
+Normalement les applications doivent demarrer sans erreur comme ceci :
 https://media.discordapp.net/attachments/786291827463553024/793976388683169832/Capture_decran_2020-12-30_a_23.58.33.png
 
 
@@ -59,7 +59,7 @@ Puis vous pourrez vous authentifier avec l'utilisateur Portus (ou LDAP si intég
 comme ceci:
 https://media.discordapp.net/attachments/786291827463553024/793976388683169832/Capture_decran_2020-12-30_a_23.58.33.png
 
-Pour ensuite, que vous puissiez push une image dans votre Registry afin qu'elle soit scanné par Clair:
+Pour ensuite que vous puissiez push une image dans votre Registry afin qu'elle soit scannée par Clair:
 https://media.discordapp.net/attachments/786291827463553024/793981546524704788/Capture_decran_2020-12-31_a_00.19.07.png
 
 Néanmoins une attention particulière vous est demandée, en effet il ne faudra pas
@@ -85,11 +85,11 @@ time="2020-12-30T23:32:50Z" level=error msg="retryingsink: error writing events:
 time="2020-12-30T23:32:50Z" level=warning msg="httpSink{https://192.168.1.25/v2/webhooks/events%7D encountered too many errors, backing off"
 ```
 
-## Difficultés rencontrés
+## Difficultés rencontrées
 
 La première a été le manque de temps pouvant être consacré au projet, ensuite la génération des 
 certificats avec la bonne configuration afin de permettre la connexion en HTTPS vers Portus, 
-avec bien sur l'analyse clair qui, comme dis précédemment, n'a pas pu aboutir suite au soucis de 
+avec bien-sûr l'analyse Clair qui, comme dit précédemment, n'a pas pu aboutir suite au soucis de 
 communication avec le certificat auto-signé. Avec plus de temps nous aurions pu finaliser ce test
 et automatiser cette analyse en passant de docker-compose à Kubernetes et en utilisant un job qui 
 aurait automatisé l'analyse à la suite de chaque livraison sur le registry. Enfin un Web Service 
