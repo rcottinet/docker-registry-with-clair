@@ -32,9 +32,16 @@ Après ça, vous pouvez simplement déplacer les fichiers ``portus.key`` et ``po
 dans le repertoire /secrets (si le certificat n'est pas pris en compte relancez les containers).
 
 
-## The setup
+A partir de maintenant, vous devez pouvoir lancer les containers par la commande :
 
-### Secure example
+```bash
+docker-compose up -d
+```
+Normalement les applications doivent demarrer sans erreurs comme ceci :
+https://media.discordapp.net/attachments/786291827463553024/793976388683169832/Capture_decran_2020-12-30_a_23.58.33.png
+
+
+## The setup
 
 Dans cet exemple on utilise un container NGinx comme proxy entre les containers Portus
 et le Registry. La communication est toujours chiffrée via ssl, bien que non nécessaire
@@ -44,15 +51,6 @@ utiliserons la même ip de la machine. de manière plus technique:
 coché la boite "Use SSL" après avoir rentré votre ip, sans spécifier le port.
 - depuis le CLI, les images docker devront être prefixé avec l'ip, mais sans spécifier le port
 (e.g. "255.255.255.255/opensuse/amd64:latest")
-
-A partir de maintenant, vous devez pouvoir lancer les containers par la commande :
-
-```bash
-docker-compose up -d
-```
-Normalement les applications doivent demarrer sans erreurs comme ceci :
-https://media.discordapp.net/attachments/786291827463553024/793976388683169832/Capture_decran_2020-12-30_a_23.58.33.png
-
 
 Une fois votre Registry ajouté vous devriez pouvoir le voir tel que l'image suivante dans Portus:
 https://media.discordapp.net/attachments/786291827463553024/793981308145500170/Capture_decran_2020-12-31_a_00.18.09.png?width=1616&height=910
